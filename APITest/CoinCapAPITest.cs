@@ -1,6 +1,6 @@
-using System.Runtime.InteropServices.JavaScript;
-using ConsoleAPITestApp.Models;
 using ConsoleAPITestApp.Services.API;
+using ConsoleAPITestApp.Models;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace APITest
 {
@@ -47,7 +47,7 @@ namespace APITest
                 QuoteId = "bitcoin",
             };
             var uri = api.BuildRequestUri("candles", candleParams);
-            Assert.That(uri, Is.EqualTo("api.coincap.io/v2/candles?exchange=poloniex&interval=h8&baseId=ethereum&quoteId=bitcoin%0A"));
+            Assert.That(uri, Is.EqualTo("https://api.coincap.io/v2/candles?exchange=poloniex&interval=h8&baseId=ethereum&quoteId=bitcoin"));
         }
 
         [Test]
