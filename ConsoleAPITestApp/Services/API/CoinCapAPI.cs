@@ -138,7 +138,7 @@ namespace ConsoleAPITestApp.Services.API
             return builder.Uri.ToString();
         }
         
-        public async Task<IEnumerable<Market>> GetAssetMarketsAsync(string id, MarketRequestParameters parameters = null)
+        private async Task<IEnumerable<Market>> GetAssetMarketsAsync(string id, MarketRequestParameters parameters = null)
         {
             var requestUri = BuildRequestUri($"assets/{id}/markets", parameters);
             var response = await _httpClient.GetAsync(requestUri);
@@ -162,6 +162,12 @@ namespace ConsoleAPITestApp.Services.API
                 throw;
             }
             
+        }
+        
+        public async Task<IEnumerable<Market>> GetMarketsAsync(string id, int limit = 10)
+        {
+            var markets = await GetAssetMarketsAsync(id, new MarketRequestParameters { Limit = limit });
+            return markets; 
         }
 
     }

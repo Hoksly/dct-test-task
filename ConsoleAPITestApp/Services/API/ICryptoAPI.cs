@@ -7,6 +7,8 @@ namespace ConsoleAPITestApp.Services.API
         Task<IEnumerable<Currency>> GetTopCurrenciesAsync(int count);
         Task<Currency> GetCurrencyAsync(string id);
         Task<bool> Ping();
+        
+        Task<IEnumerable<Market>> GetMarketsAsync(string id, int count);
 
     }
 }
