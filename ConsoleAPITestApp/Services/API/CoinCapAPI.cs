@@ -108,22 +108,61 @@ namespace ConsoleAPITestApp.Services.API
             return JObject.Parse(await response.Content.ReadAsStringAsync())["data"].ToObject<IEnumerable<Asset>>();
         }
 
-        private string BuildRequestUri(string endpoint, AssetRequestParameters parameters = null)
+        private string BuildRequestUri(string endpoint, RequestParameters parameters = null)
         {
             var builder = new UriBuilder(_baseUrl + endpoint);
             var query = HttpUtility.ParseQueryString(builder.Query);
 
-            if (parameters != null)
+            if (parameters is AssetRequestParameters)
             {
-                if (parameters.Limit.HasValue)
+                var assetParameters = parameters as AssetRequestParameters;
+                if (assetParameters.Limit.HasValue && assetParameters.Limit.Value > 0)
                 {
-                    query["limit"] = parameters.Limit.Value.ToString();
+                    query["limit"] = assetParameters.Limit.Value.ToString();
                 }
-                
+            }
+            else if (parameters is MarketRequestParameters)
+            {
+                var marketParameters = parameters as MarketRequestParameters;
+                if (marketParameters.Limit.HasValue && marketParameters.Limit.Value > 0)
+                {
+                    query["limit"] = marketParameters.Limit.Value.ToString();
+                }
+                if (marketParameters.Offset.HasValue) 
+                {
+                    query["offset"] = marketParameters.Offset.Value.ToString();
+                }
             }
 
             builder.Query = query.ToString();
             return builder.Uri.ToString();
         }
+        
+        public async Task<IEnumerable<Market>> GetAssetMarketsAsync(string id, MarketRequestParameters parameters = null)
+        {
+            var requestUri = BuildRequestUri($"assets/{id}/markets", parameters);
+            var response = await _httpClient.GetAsync(requestUri);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Handle API errors (e.g., throw an exception)
+                throw new HttpRequestException($"API request failed with status code: {response.StatusCode}");
+            }
+        
+            var jsonResponseString = await response.Content.ReadAsStringAsync();
+            try
+            {
+                var data = JObject.Parse(jsonResponseString)["data"].ToObject<IEnumerable<Market>>();
+                return data;
+            }
+            catch (Exception e)
+            {
+                // Handle JSON parsing errors TODO
+                
+                throw;
+            }
+            
+        }
+
     }
 }
