@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using System.Web;
 using ConsoleAPITestApp.Exceptions.ConsoleAPITestApp.Services.API;
@@ -30,6 +31,32 @@ namespace ConsoleAPITestApp.Services.API
         {
             var assets = await GetAssetsAsync(new AssetRequestParameters { Limit = count });
             return assets.Select(asset => asset.ToCurrency());
+        }
+
+        public async Task<bool> Ping()
+        {
+            try
+            {
+                // Choose a simple API endpoint known to exist
+                var requestUri = BuildRequestUri("assets"); 
+
+                // Make request with a short timeout
+                using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(5)); 
+                var response = await _httpClient.GetAsync(requestUri, timeoutCts.Token);
+
+                // Consider a simple status code check for success
+                return response.IsSuccessStatusCode;
+            }
+            catch (HttpRequestException) 
+            {
+                // Basic network-level failure
+                return false;
+            }
+            catch (TaskCanceledException) 
+            {
+                // Timeout occurred
+                return false;
+            }
         }
         
         public async Task<Asset> GetAssetAsync(string id)
