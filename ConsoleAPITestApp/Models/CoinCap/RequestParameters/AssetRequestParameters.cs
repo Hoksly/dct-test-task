@@ -1,6 +1,6 @@
 namespace ConsoleAPITestApp.Models
 {
-    public class AssetRequestParameters
+    public class AssetRequestParameters : RequestParameters
     {
         public string Search { get; set; }
         public string[] Ids { get; set; }
