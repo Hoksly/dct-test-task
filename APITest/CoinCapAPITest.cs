@@ -5,16 +5,16 @@ namespace APITest
 {
     public class CoinCapAPITest
     {
+        private CoinCapAPI api;
         [SetUp]
         public void Setup()
         {
-            CoinCapAPI api = new CoinCapAPI(new HttpClient());
+            api = new CoinCapAPI(new HttpClient());
         }
 
         [Test]
         public void TestPing()
         {
-            CoinCapAPI api = new CoinCapAPI(new HttpClient());
             bool result = api.Ping().Result;
             Assert.IsTrue(result);
         }
@@ -22,7 +22,6 @@ namespace APITest
         [Test] 
         public void TestGetTopCurrenciesAsync()
         {
-            CoinCapAPI api = new CoinCapAPI(new HttpClient());
             IEnumerable<Currency> result = api.GetTopCurrenciesAsync(10).Result;
             Assert.IsNotNull(result);
             // check if the result has 10 items
@@ -32,13 +31,24 @@ namespace APITest
         [Test]
         public void TestGetCurrencyAsync()
         {
-            CoinCapAPI api = new CoinCapAPI(new HttpClient());
             Currency result = api.GetCurrencyAsync("bitcoin").Result;
-            
             Assert.IsNotNull(result);
             // check if the result has the correct id
             Assert.That(result.Id, Is.EqualTo("bitcoin"));
         }
+        
+        [Test]
+        public void TestGetAssetMarketsAsync()
+        {
+            IEnumerable<Market> result = api.GetMarketsAsync("bitcoin", 10).Result;
+            Assert.IsNotNull(result);
+            // check if the result has 10 items or less
+            Assert.That(result.Count(), Is.LessThanOrEqualTo(10));
+            
+            // check if the result has the correct base id
+            Assert.That(result.All(market => market.BaseId == "bitcoin"));
+        }
+
         
     }
 }
