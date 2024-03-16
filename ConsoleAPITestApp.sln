@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleAPITestApp", "Consol
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APITest", "APITest\APITest.csproj", "{05F92CDC-4840-4BAA-91D9-258F5448B61C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIWrapper", "APIWrapper\APIWrapper.csproj", "{DF751DF5-097C-47E4-A53C-2179F3FE1A26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{05F92CDC-4840-4BAA-91D9-258F5448B61C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05F92CDC-4840-4BAA-91D9-258F5448B61C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05F92CDC-4840-4BAA-91D9-258F5448B61C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF751DF5-097C-47E4-A53C-2179F3FE1A26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF751DF5-097C-47E4-A53C-2179F3FE1A26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF751DF5-097C-47E4-A53C-2179F3FE1A26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF751DF5-097C-47E4-A53C-2179F3FE1A26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

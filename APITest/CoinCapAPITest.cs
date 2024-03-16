@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using ConsoleAPITestApp.Models;
 using ConsoleAPITestApp.Services.API;
 
@@ -10,6 +11,43 @@ namespace APITest
         public void Setup()
         {
             api = new CoinCapAPI(new HttpClient());
+        }
+        
+        [Test]
+        public void TestAssetBuildRequestUri()
+        {
+            var parameters = new AssetRequestParameters
+            {
+                Limit = 10,
+                Offset = 0
+            };
+            var uri = api.BuildRequestUri("assets", parameters);
+            Assert.That(uri, Is.EqualTo("https://api.coincap.io/v2/assets?limit=10&offset=0"));
+        }
+        [Test]
+        public void TestMarketBuildRequestUri()
+        {
+            var parameters = new MarketRequestParameters
+            {
+                Limit = 10,
+                Offset = 0
+            };
+            var uri = api.BuildRequestUri("assets/bitcoin/markets", parameters);
+            Assert.That(uri, Is.EqualTo("https://api.coincap.io/v2/assets/bitcoin/markets?limit=10&offset=0"));
+        }
+
+        [Test]
+        public void TestCandleBuildRequestUri()
+        {
+            var candleParams = new CandleRequestParameters
+            {
+                Exchange = "poloniex",
+                Interval = "h8",
+                BaseId = "ethereum",
+                QuoteId = "bitcoin",
+            };
+            var uri = api.BuildRequestUri("candles", candleParams);
+            Assert.That(uri, Is.EqualTo("api.coincap.io/v2/candles?exchange=poloniex&interval=h8&baseId=ethereum&quoteId=bitcoin%0A"));
         }
 
         [Test]

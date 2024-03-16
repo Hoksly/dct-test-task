@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -108,7 +109,7 @@ namespace ConsoleAPITestApp.Services.API
             return JObject.Parse(await response.Content.ReadAsStringAsync())["data"].ToObject<IEnumerable<Asset>>();
         }
 
-        private string BuildRequestUri(string endpoint, RequestParameters parameters = null)
+        public string BuildRequestUri(string endpoint, RequestParameters parameters = null)
         {
             var builder = new UriBuilder(_baseUrl + endpoint);
             var query = HttpUtility.ParseQueryString(builder.Query);
@@ -119,6 +120,10 @@ namespace ConsoleAPITestApp.Services.API
                 if (assetParameters.Limit.HasValue && assetParameters.Limit.Value > 0)
                 {
                     query["limit"] = assetParameters.Limit.Value.ToString();
+                }
+                if (assetParameters.Offset.HasValue)
+                {
+                    query["offset"] = assetParameters.Offset.Value.ToString();
                 }
             }
             else if (parameters is MarketRequestParameters)
@@ -131,6 +136,35 @@ namespace ConsoleAPITestApp.Services.API
                 if (marketParameters.Offset.HasValue) 
                 {
                     query["offset"] = marketParameters.Offset.Value.ToString();
+                }
+            }
+            
+            else if (parameters is CandleRequestParameters)
+            {
+                var candleParameters = parameters as CandleRequestParameters;
+                if (candleParameters.Exchange != null)
+                {
+                    query["exchange"] = candleParameters.Exchange;
+                }
+                if (candleParameters.Interval != null)
+                {
+                    query["interval"] = candleParameters.Interval;
+                }
+                if (candleParameters.BaseId != null)
+                {
+                    query["baseId"] = candleParameters.BaseId;
+                }
+                if (candleParameters.QuoteId != null)
+                {
+                    query["quoteId"] = candleParameters.QuoteId;
+                }
+                if (candleParameters.Start.HasValue)
+                {
+                    query["start"] = candleParameters.Start.Value.ToString();
+                }
+                if (candleParameters.End.HasValue)
+                {
+                    query["end"] = candleParameters.End.Value.ToString();
                 }
             }
 
@@ -168,6 +202,38 @@ namespace ConsoleAPITestApp.Services.API
         {
             var markets = await GetAssetMarketsAsync(id, new MarketRequestParameters { Limit = limit });
             return markets; 
+        }
+        
+        public async Task<IEnumerable<Candle>> GetCandlesAsync(CandleRequestParameters parameters)
+        {
+            var requestUri = BuildRequestUri("candles", parameters);
+            var response = await _httpClient.GetAsync(requestUri);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Handle API errors 
+                throw new HttpRequestException($"API request failed with status code: {response.StatusCode}");
+            }
+
+            var jsonResponseString = await response.Content.ReadAsStringAsync();
+            var data = JObject.Parse(jsonResponseString)["data"].ToObject<IEnumerable<Candle>>(); 
+            return data;
+        }
+        
+        public async Task<IEnumerable<Exchange>> GetExchangesAsync()
+        {
+            var requestUri = BuildRequestUri("exchanges");
+            var response = await _httpClient.GetAsync(requestUri);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Handle API errors 
+                throw new HttpRequestException($"API request failed with status code: {response.StatusCode}");
+            }
+
+            var jsonResponseString = await response.Content.ReadAsStringAsync();
+            var data = JObject.Parse(jsonResponseString)["data"].ToObject<IEnumerable<Exchange>>(); 
+            return data;
         }
 
     }
